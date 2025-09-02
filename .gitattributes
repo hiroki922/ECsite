@@ -1,0 +1,5 @@
+# Windows バッチファイルは CRLF に強制
+*.cmd text eol=crlf
+
+# シェルスクリプトは LF に強制
+*.sh text eol=lff
