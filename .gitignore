@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Backend
+/backend/target/
+
+# Frontend
+/frontend/node_modules/
+/frontend/dist/
+
+.DS_Store

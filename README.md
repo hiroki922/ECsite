@@ -88,3 +88,34 @@ Spring Boot + Vue.js(TypeScript) で ECサイト（ログイン・商品一覧�
     * useCartStore (カート内容)
 15. UI
     * Vuetify / Element Plus などの UI ライブラリを使うと楽
+
+ディレクトリ構造
+
+ECsite/
+├─ backend/                ← Spring Boot プロジェクト
+│   ├─ src/
+│   │   ├─ main/
+│   │   │   ├─ java/com/example/ecsite/...
+│   │   │   └─ resources/
+│   │   │       ├─ application.yml
+│   │   │       ├─ static/      ← 画像や静的ファイル
+│   │   │       └─ templates/   ← Thymeleafを使う場合のみ
+│   │   └─ test/java/...
+│   ├─ pom.xml
+│   └─ mvnw, mvnw.cmd
+│
+├─ frontend/               ← Vue 3 + TypeScript プロジェクト
+│   ├─ src/
+│   │   ├─ assets/
+│   │   ├─ components/
+│   │   ├─ views/
+│   │   ├─ store/          ← Pinia
+│   │   ├─ router/         ← Vue Router
+│   │   └─ api/            ← axios 設定やAPI呼び出し
+│   ├─ public/
+│   ├─ package.json
+│   └─ tsconfig.json
+│
+├─ .gitignore
+├─ .gitattributes
+└─ README.md
