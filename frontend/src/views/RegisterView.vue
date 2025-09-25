@@ -87,4 +87,4 @@ const handleRegister = () => {
   alert(`登録成功 🎉\n名前: ${name.value}\nメール: ${email.value}`)
 }
 </script>
-"
+
