@@ -66,14 +66,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import BaseInput from '@/components/BaseInput.vue'
-
+import axios from 'axios'
 const name = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const errorMessage = ref('')
-
-const handleRegister = () => {
+const handleRegister = async () => {
   if (!name.value || !email.value || !password.value || !confirmPassword.value) {
     errorMessage.value = '全ての項目を入力してください'
     return
@@ -82,9 +81,22 @@ const handleRegister = () => {
     errorMessage.value = 'パスワードが一致しません'
     return
   }
-
-  // ここでAPIリクエストなどを実装する
-  alert(`登録成功 🎉\n名前: ${name.value}\nメール: ${email.value}`)
+  // サーバーから返ってくるデータの型
+  interface RegisterResponse {
+    id: number
+    name: string
+  }
+  try {
+    const res = await axios.post<RegisterResponse>('http://localhost:8080/api/register', {
+      name: name.value,
+      email: email.value,
+      password: password.value,
+      confirmPassword: confirmPassword.value
+    })
+    errorMessage.value = `✅ 登録成功！ID: ${res.data.id}, 名前: ${res.data.name}`
+  } catch (err) {
+    const axiosError = err as { response?: { data?: { message?: string } }; message: string }
+    errorMessage.value = "❌ 登録失敗: " + (axiosError.response?.data?.message || axiosError.message)
+  }
 }
 </script>
-
