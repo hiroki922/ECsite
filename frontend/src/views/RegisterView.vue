@@ -67,6 +67,8 @@
 import { ref } from 'vue'
 import BaseInput from '@/components/BaseInput.vue'
 import axios from 'axios'
+import api from '@/plugins/axios';
+
 const name = ref('')
 const email = ref('')
 const password = ref('')
@@ -87,7 +89,7 @@ const handleRegister = async () => {
     name: string
   }
   try {
-    const res = await axios.post<RegisterResponse>('http://localhost:8080/api/register', {
+    const res = await api.post<RegisterResponse>('http://localhost:8080/api/register', {
       name: name.value,
       email: email.value,
       password: password.value,
@@ -95,8 +97,8 @@ const handleRegister = async () => {
     })
     errorMessage.value = `✅ 登録成功！ID: ${res.data.id}, 名前: ${res.data.name}`
   } catch (err) {
-    const axiosError = err as { response?: { data?: { message?: string } }; message: string }
-    errorMessage.value = "❌ 登録失敗: " + (axiosError.response?.data?.message || axiosError.message)
+    const axiosError = err as { response?: { data?: { error?: string } }; message: string }
+    errorMessage.value = "❌ 登録失敗: " + (axiosError.response?.data?.error || axiosError.message)
   }
 }
 </script>
