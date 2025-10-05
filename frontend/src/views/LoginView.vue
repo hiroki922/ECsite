@@ -54,17 +54,37 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import axios from "axios";
 import BaseInput from "@/components/BaseInput.vue";
 
 const email = ref("");
 const password = ref("");
 const errorMessage = ref("");
+// CSRFトークンの取得
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-const handleLogin = () => {
-  if (email.value === "test@example.com" && password.value === "password") {
+const handleLogin = async () => {
+  errorMessage.value = ""; // エラーメッセージをリセット
+
+  // フロントから送るJSONを確認
+  console.log("送信データ:", JSON.stringify({ email: email.value, password: password.value }));
+
+  try {
+    // Sping Bootのバックエンドにログインリクエストを送信
+    // ここではaxiosを使ってPOSTリクエストを送信します
+    const res = await axios.post<{ message: string }>("http://localhost:8080/api/login", {
+      email: email.value,
+      password: password.value,
+    });
+
+    // ログイン成功時の処理
     alert("ログイン成功 🎉");
-  } else {
-    errorMessage.value = "メールアドレスまたはパスワードが間違っています";
+    console.log(res.data);
+
+  } catch (err) {
+    // エラーハンドリング
+    const axiosError = err as { response?: { data?: { error?: string } } };
+    errorMessage.value = axiosError.response?.data?.error ||  "メールアドレスまたはパスワードが間違っています";
   }
 };
 </script>
