@@ -1,27 +1,17 @@
 <template>
   <div class="flex justify-center items-center min-h-screen bg-gray-100">
     <div class="bg-white p-10 rounded-2xl shadow-lg w-96">
-      <h1 class="text-3xl font-bold text-center mb-6 text-gray-700">
-        ログイン
-      </h1>
+      <h1 class="text-3xl font-bold text-center mb-6 text-gray-700">ログイン</h1>
 
       <form @submit.prevent="handleLogin">
         <!-- メールアドレス -->
         <div class="mb-4">
-          <BaseInput
-            v-model="email"
-            type="email"
-            placeholder="メールアドレス"
-          />
+          <BaseInput v-model="email" type="email" placeholder="メールアドレス" />
         </div>
 
         <!-- パスワード -->
         <div class="mb-4">
-          <BaseInput
-            v-model="password"
-            type="password"
-            placeholder="パスワード"
-          />
+          <BaseInput v-model="password" type="password" placeholder="パスワード" />
         </div>
 
         <!-- ログインボタン -->
@@ -36,9 +26,7 @@
 
         <!-- 登録フォームへの案内 -->
         <div class="text-sm text-center text-gray-600 mt-4">
-          <p >
-            アカウントをお持ちでないですか？
-          </p>
+          <p>アカウントをお持ちでないですか？</p>
           <p>
             <a href="/register" class="text-blue-500 hover:underline">登録はこちら</a>
           </p>
@@ -53,38 +41,57 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import axios from "axios";
-import BaseInput from "@/components/BaseInput.vue";
+import { ref } from 'vue'
+import axios from 'axios'
+import BaseInput from '@/components/BaseInput.vue'
+import { useAuthStore } from '@/stores/auth'
+import router from '@/router'
 
-const email = ref("");
-const password = ref("");
-const errorMessage = ref("");
-// CSRFトークンの取得
-const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+// フォーム入力
+const email = ref('')
+const password = ref('')
+const errorMessage = ref('')
+const auth = useAuthStore()
+
+// バックエンドレスポンス型
+interface User {
+  name: string
+  email: string
+}
+
+// サーバーから返ってくるデータの型
+interface LoginResponse {
+  loggedIn: boolean
+  user?: User
+  message?: string
+}
 
 const handleLogin = async () => {
-  errorMessage.value = ""; // エラーメッセージをリセット
-
-  // フロントから送るJSONを確認
-  console.log("送信データ:", JSON.stringify({ email: email.value, password: password.value }));
+  errorMessage.value = '' // エラーメッセージをリセット
 
   try {
     // Sping Bootのバックエンドにログインリクエストを送信
     // ここではaxiosを使ってPOSTリクエストを送信します
-    const res = await axios.post<{ message: string }>("http://localhost:8080/api/login", {
+    const res = await axios.post<LoginResponse>('http://localhost:8080/api/login', {
       email: email.value,
       password: password.value,
-    });
+    })
+
+    const loginData = res.data
 
     // ログイン成功時の処理
-    alert("ログイン成功 🎉");
-    console.log(res.data);
-
+    if (loginData.loggedIn && loginData.user) {
+      // ユーザー情報をPiniaストアに保存
+      auth.setUser(loginData.user)
+      router.push('/')
+    } else {
+      errorMessage.value = loginData.message || 'メールアドレスまたはパスワードが間違っています'
+    }
   } catch (err) {
     // エラーハンドリング
-    const axiosError = err as { response?: { data?: { error?: string } } };
-    errorMessage.value = axiosError.response?.data?.error ||  "メールアドレスまたはパスワードが間違っています";
+    const axiosError = err as { response?: { data?: { error?: string } } }
+    errorMessage.value =
+      axiosError.response?.data?.error || 'メールアドレスまたはパスワードが間違っています'
   }
-};
+}
 </script>

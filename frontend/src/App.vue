@@ -1,14 +1,11 @@
 <template>
-  <header class="p-4 bg-gray-800 text-white">
-    <h1 class="text-xl font-bold">ECサイト</h1>
-    <nav class="mt-2 space-x-4">
-      <router-link to="/">Home</router-link>
-      <router-link to="/login">Login</router-link>
-    </nav>
-  </header>
-
+  <HeaderComponent />
+  <!-- ヘッダーを別コンポーネント化 -->
   <main class="p-6">
-    <!-- ルートごとにコンテンツがここに表示される -->
     <router-view />
   </main>
 </template>
+
+<script setup lang="ts">
+import HeaderComponent from './components/HeaderComponent.vue'
+</script>
