@@ -1,27 +1,18 @@
 package com.example.ecsite.dto;
 
-// ログインリクエストのデータを受け取るためのクラス
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+
+/**
+ * ログインリクエストの DTO
+ * フロントから送られてくるログイン情報を受け取る
+ */
+@Getter
+@Setter
+@NoArgsConstructor
 public class LoginRequest {
     private String email;
     private String password;
-
-    // 空のコンストラクタ（Springがオブジェクトを生成するために必要）
-    public LoginRequest() {}
-
-    // ゲッターとセッター
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }
