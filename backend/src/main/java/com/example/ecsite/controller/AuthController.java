@@ -1,6 +1,7 @@
 package com.example.ecsite.controller;
 
 // User クラスを使うため。ユーザ情報（名前・メール・パスワードなど）を扱う
+import com.example.ecsite.dto.UserDto;
 import com.example.ecsite.model.User;
 // REST コントローラを作成するためのアノテーション @RestController を使う
 import org.springframework.web.bind.annotation.RestController;
@@ -14,15 +15,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 // ビジネスロジックを担当する AuthService を使うためのインポート
 import com.example.ecsite.service.AuthService;
-// ログインリクエストのデータを受け取るためのクラス
+// HTTPレスポンスを返すために使用するクラス
 import org.springframework.http.ResponseEntity;
 // Map を使ってレスポンスボディを作成するためのインポート
 import java.util.Map;
 // ログインリクエストのデータを受け取るためのクラス
 import com.example.ecsite.dto.LoginRequest;
+
+import com.example.ecsite.dto.LoginResponse;
 // HTTP ステータスコードを扱うためのインポート
 import org.springframework.http.HttpStatus;
 
+
+
+/**
+ * 認証関連のコントローラー
+ * このクラスでは、ユーザー登録やログインなど
+ * 認証に関わる APIとする
+ */
 // 認証関連のAPIエンドポイントを提供するコントローラー
 @RestController
 @RequestMapping("/api")
@@ -32,23 +42,41 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    // ユーザー登録エンドポイント
+    /**
+     * ユーザー登録エンドポイント
+     * URL: POST /register
+     * リクエスト: JSON 形式でユーザー情報（name, email, password）
+     * レスポンス: 登録された User オブジェクト
+     *
+     * @param user フロントから送られてくるユーザー情報
+     * @return 登録されたユーザー情報
+     */
     @PostMapping("/register")
     public User register(@RequestBody User user) {
         // リクエストボディからユーザー情報を取得
         return authService.register(user.getName(), user.getEmail(), user.getPassword());
     }
 
+    /**
+     * ユーザーログインエンドポイント
+     * URL: POST /login
+     * リクエスト: JSON 形式で LoginRequest（email, password）
+     * レスポンス:
+     *   - 成功: HTTP 200 と LoginResponse（isLoggedIn: true, user: UserDto）
+     *   - 失敗: HTTP 401 とエラーメッセージ
+     *
+     * @param request フロントから送られてくるログイン情報
+     * @return ResponseEntity<LoginResponse> または エラーメッセージ
+     */
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest request) {
-        // 値を確認
-        System.out.println("フロントから来た email: " + request.getEmail());
-        System.out.println("フロントから来た password: " + request.getPassword());
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
 
-        boolean success = authService.login(request.getEmail(), request.getPassword());
+        User user = authService.login(request.getEmail(), request.getPassword());
 
-        if (success) {
-            return ResponseEntity.ok(Map.of("message", "ログイン成功"));
+        if (user != null) {
+            var userDto = new UserDto(user.getName());
+            var response = new LoginResponse(true, "ログイン成功", userDto);
+            return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", "メールアドレスまたはパスワードが間違っています"));
