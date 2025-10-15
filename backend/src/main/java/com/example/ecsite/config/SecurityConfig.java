@@ -21,6 +21,7 @@ import org.springframework.lang.NonNull;
 // HttpSecurity を使ってセキュリティ設定を行う
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
+@SuppressWarnings("unused")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -32,7 +33,7 @@ public class SecurityConfig {
             .cors(cors -> {}) // CORS設定を有効化
             .csrf(csrf -> csrf.disable()) // SPAではCSRF無効化も検討
             .authorizeHttpRequests(auth ->auth
-                .requestMatchers("/api/register", "/api/login").permitAll() // 登録エンドポイントは全員アクセス可能
+                .requestMatchers("/api/register", "/api/login", "/api/logout").permitAll() // 登録エンドポイントは全員アクセス可能
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // OPTIONS は全て許可
                 .anyRequest().authenticated() // その他は認証が必要
             )

@@ -72,10 +72,14 @@ const handleLogin = async () => {
   try {
     // Sping Bootのバックエンドにログインリクエストを送信
     // ここではaxiosを使ってPOSTリクエストを送信します
-    const res = await axios.post<LoginResponse>('http://localhost:8080/api/login', {
-      email: email.value,
-      password: password.value,
-    })
+    const res = await axios.post<LoginResponse>(
+      'http://localhost:8080/api/login',
+      {
+        email: email.value,
+        password: password.value,
+      },
+      { withCredentials: true }
+    ) // withCredentialsをtrueに設定してクッキーを送信
 
     const loginData = res.data
 

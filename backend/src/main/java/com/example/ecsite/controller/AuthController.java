@@ -4,6 +4,10 @@ package com.example.ecsite.controller;
 import com.example.ecsite.dto.UserDto;
 import com.example.ecsite.model.User;
 // REST コントローラを作成するためのアノテーション @RestController を使う
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.web.bind.annotation.RestController;
 // HTTP POST リクエストを処理するためのアノテーション @PostMapping を使う
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +38,7 @@ import org.springframework.http.HttpStatus;
  * 認証に関わる APIとする
  */
 // 認証関連のAPIエンドポイントを提供するコントローラー
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/api")
 public class AuthController {
@@ -69,11 +74,14 @@ public class AuthController {
      * @return ResponseEntity<LoginResponse> または エラーメッセージ
      */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
 
         User user = authService.login(request.getEmail(), request.getPassword());
 
         if (user != null) {
+            // ログイン成功時にセッションを作成して JSESSIONID を発行
+            httpRequest.getSession(true);
+
             var userDto = new UserDto(user.getName());
             var response = new LoginResponse(true, "ログイン成功", userDto);
             return ResponseEntity.ok(response);
@@ -81,5 +89,23 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", "メールアドレスまたはパスワードが間違っています"));
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        // セッションを無効化
+        var session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        // クッキーも削除
+        Cookie cookie = new Cookie("JSESSIONID", null);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0); // 有効期限を0にして削除
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok(Map.of("message", "ログアウトしました"));
     }
 }    
