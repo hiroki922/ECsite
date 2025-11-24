@@ -6,13 +6,19 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import './app.css'
+import { useAuthStore } from './stores/auth'
 
-// ① アプリインスタンスを作成
+// アプリインスタンスを作成
 const app = createApp(App)
 
-// ② プラグイン登録
-app.use(createPinia()) // Pinia
+// プラグイン登録
+const pinia = createPinia()
+app.use(pinia) // Pinia
 app.use(router) // Vue Router
 
-// ③ アプリをマウント
+// ストアからログイン状態を復元
+const auth = useAuthStore()
+auth.restoreFromStorage()
+
+// アプリをマウント
 app.mount('#app')

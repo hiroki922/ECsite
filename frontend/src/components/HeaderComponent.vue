@@ -1,23 +1,57 @@
 <template>
   <header class="p-4 bg-gray-800 text-white flex justify-between items-center">
-    <h1 class="text-xl font-bold">ECサイト</h1>
+    <router-link :to="homePath" class="text-xl font-bold">
+      ECサイト
+    </router-link>
     <nav class="space-x-4 flex items-center">
-      <router-link to="/">Home</router-link>
-      <router-link to="/products">Products</router-link>
-      <router-link to="/cart">Cart</router-link>
-      <router-link to="/orders">Orders</router-link>
+      <router-link :to="homePath">Home</router-link>
 
-      <template v-if="auth.isLoggedIn">
+      <!-- 未ログイン -->
+      <template v-if="!auth.isLoggedIn">
+        <router-link to="/products">商品一覧</router-link>
+        <router-link
+          to="/login"
+          class="bg-blue-500 text-white font-semibold px-3 py-1 rounded hover:bg-blue-600"
+        >
+          ログイン
+        </router-link>
+        <router-link
+          to="/register"
+          class="bg-green-500 text-white font-semibold px-3 py-1 rounded hover:bg-green-600"
+        >
+          新規登録
+        </router-link>
+      </template>
+
+      <!-- 一般ユーザー -->
+      <template v-else-if="auth.isLoggedIn && auth.role === 'USER'">
+        <router-link to="/products">商品一覧</router-link>
+        <router-link to="/cart">カート</router-link>
+        <router-link to="/orders">注文履歴</router-link>
         <span class="text-gray-300 text-sm">ようこそ、{{ auth.userName }} さん</span>
-        <button @click="logout" class="bg-red-500 px-3 py-1 rounded hover:bg-red-600">
-          Logout
+        <button
+          @click="logout"
+          class="bg-red-500 text-white font-semibold px-3 py-1 rounded hover:bg-red-600"
+        >
+          ログアウト
         </button>
       </template>
 
-      <template v-else>
-        <router-link to="/login" class="bg-blue-500 px-3 py-1 rounded hover:bg-blue-600">
-          Login
+      <!-- 管理者 -->
+      <template v-else-if="auth.isLoggedIn && auth.role === 'ADMIN'">
+        <router-link
+          to="/admin"
+          class="bg-green-500 text-white font-semibold px-3 py-1 rounded hover:bg-green-600"
+        >
+          管理者ページ
         </router-link>
+        <span class="text-gray-300 text-sm">ようこそ、{{ auth.userName }} さん</span>
+        <button
+          @click="logout"
+          class="bg-red-500 text-white font-semibold px-3 py-1 rounded hover:bg-red-600"
+        >
+          ログアウト
+        </button>
       </template>
     </nav>
   </header>
@@ -27,8 +61,10 @@
 import { useAuthStore } from '@/stores/auth'
 import router from '@/router'
 import axios from 'axios'
+import { computed } from 'vue'
 
 const auth = useAuthStore()
+const homePath = computed(() => (auth.isLoggedIn && auth.role === 'ADMIN' ? '/admin' : '/'))
 
 async function logout(): Promise<void> {
   try {
