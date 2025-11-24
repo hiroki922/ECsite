@@ -1,6 +1,6 @@
 package com.example.ecsite.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import com.example.ecsite.model.Product;
 import com.example.ecsite.service.ProductService;
@@ -9,10 +9,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
+@RequiredArgsConstructor
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
     // 商品一覧を取得
     @GetMapping
@@ -20,9 +20,9 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
-    // 商品追加
-    @PostMapping
-    public  Product addProduct(@RequestBody Product product) {
-        return productService.addProduct(product);
+    // 商品詳細を取得
+    @GetMapping("/{id}")
+    public Product getProductById(@PathVariable Long id) {
+        return productService.getProductById(id);
     }
 }

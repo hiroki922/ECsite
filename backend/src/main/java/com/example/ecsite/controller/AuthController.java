@@ -8,13 +8,12 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 // HTTP POST リクエストを処理するためのアノテーション @PostMapping を使う
 import org.springframework.web.bind.annotation.PostMapping;
 // リクエストボディの JSON をオブジェクトに変換する @RequestBody を使う
 import org.springframework.web.bind.annotation.RequestBody;
-// Spring が AuthService を自動で DI（依存注入）するための @Autowired を使う
-import org.springframework.beans.factory.annotation.Autowired;
 // クラス全体の URL パスを指定する @RequestMapping を使う
 import org.springframework.web.bind.annotation.RequestMapping;
 // ビジネスロジックを担当する AuthService を使うためのインポート
@@ -30,8 +29,6 @@ import com.example.ecsite.dto.LoginResponse;
 // HTTP ステータスコードを扱うためのインポート
 import org.springframework.http.HttpStatus;
 
-
-
 /**
  * 認証関連のコントローラー
  * このクラスでは、ユーザー登録やログインなど
@@ -41,11 +38,10 @@ import org.springframework.http.HttpStatus;
 @SuppressWarnings("unused")
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class AuthController {
 
-    // 認証サービス
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
     /**
      * ユーザー登録エンドポイント
@@ -76,14 +72,15 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
 
-        User user = authService.login(request.getEmail(), request.getPassword());
+        var user = authService.login(request.getEmail(), request.getPassword());
 
-        if (user != null) {
+        if (user.isPresent()) {
+            User u = user.get();
             // ログイン成功時にセッションを作成して JSESSIONID を発行
             httpRequest.getSession(true);
 
-            var userDto = new UserDto(user.getName());
-            var response = new LoginResponse(true, "ログイン成功", userDto);
+            var userDto = new UserDto(u.getName());
+            var response = new LoginResponse(true, "ログイン成功", userDto, u.getRole().name());
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

@@ -57,12 +57,14 @@ const auth = useAuthStore()
 interface User {
   name: string
   email: string
+  role?: string
 }
 
 // サーバーから返ってくるデータの型
 interface LoginResponse {
   loggedIn: boolean
   user?: User
+  role?: string
   message?: string
 }
 
@@ -71,7 +73,7 @@ const handleLogin = async () => {
 
   try {
     // Sping Bootのバックエンドにログインリクエストを送信
-    // ここではaxiosを使ってPOSTリクエストを送信します
+    // axiosを使ってPOSTリクエストを送信します
     const res = await axios.post<LoginResponse>(
       'http://localhost:8080/api/login',
       {
@@ -86,7 +88,10 @@ const handleLogin = async () => {
     // ログイン成功時の処理
     if (loginData.loggedIn && loginData.user) {
       // ユーザー情報をPiniaストアに保存
-      auth.setUser(loginData.user)
+      console.log('ログイン成功:', loginData.user)
+      const roleRaw = (loginData.user.role ?? loginData.role)?.toUpperCase()
+      const role = roleRaw === 'ADMIN' ? 'ADMIN' : 'USER'
+      auth.setUser({ name: loginData.user.name, role })
       router.push('/')
     } else {
       errorMessage.value = loginData.message || 'メールアドレスまたはパスワードが間違っています'
