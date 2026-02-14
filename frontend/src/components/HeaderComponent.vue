@@ -26,8 +26,17 @@
       <!-- 一般ユーザー -->
       <template v-else-if="auth.isLoggedIn && auth.role === 'USER'">
         <router-link to="/products">商品一覧</router-link>
-        <router-link to="/cart">カート</router-link>
+        <router-link to="/cart" class="relative">
+          カート
+          <span
+            v-if="cartStore.itemCount > 0"
+            class="absolute -top-2 -right-3 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+          >
+            {{ cartStore.itemCount }}
+          </span>
+        </router-link>
         <router-link to="/orders">注文履歴</router-link>
+        <router-link to="/addresses">配送先設定</router-link>
         <span class="text-gray-300 text-sm">ようこそ、{{ auth.userName }} さん</span>
         <button
           @click="logout"
@@ -59,12 +68,20 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
+import { useCartStore } from '@/stores/cart'
 import router from '@/router'
 import axios from 'axios'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 
 const auth = useAuthStore()
+const cartStore = useCartStore()
 const homePath = computed(() => (auth.isLoggedIn && auth.role === 'ADMIN' ? '/admin' : '/'))
+
+onMounted(() => {
+  if (auth.isLoggedIn && auth.role === 'USER') {
+    cartStore.load()
+  }
+})
 
 async function logout(): Promise<void> {
   try {

@@ -1,0 +1,48 @@
+import axios from 'axios'
+
+export type OrderItem = {
+  id: number
+  productId: number
+  productName: string
+  productImageUrl: string
+  quantity: number
+  price: number
+}
+
+export type Order = {
+  id: number
+  addressName: string
+  addressPostalCode: string
+  addressPrefecture: string
+  addressCity: string
+  addressLine: string
+  addressPhone: string
+  totalAmount: number
+  status: string
+  createdAt: string
+  items: OrderItem[]
+}
+
+export type OrderRequest = {
+  addressId: number
+}
+
+const client = axios.create({
+  baseURL: 'http://localhost:8080/api',
+  withCredentials: true,
+})
+
+export const createOrder = async (payload: OrderRequest): Promise<Order> => {
+  const res = await client.post<Order>('/orders', payload)
+  return res.data
+}
+
+export const fetchOrders = async (): Promise<Order[]> => {
+  const res = await client.get<Order[]>('/orders')
+  return res.data
+}
+
+export const fetchOrder = async (id: number): Promise<Order> => {
+  const res = await client.get<Order>(`/orders/${id}`)
+  return res.data
+}
