@@ -94,4 +94,19 @@
 		</plugins>
 	</build>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>1.5.19</version> <!-- CVE修正済みバージョンに置換 -->
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.5.19</version> <!-- 同上 -->
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
+

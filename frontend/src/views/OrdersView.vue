@@ -1,0 +1,73 @@
+<template>
+  <div class="bg-gray-100 min-h-screen py-10">
+    <div class="max-w-4xl mx-auto px-4 space-y-6">
+      <h1 class="text-3xl font-bold text-gray-800">注文履歴</h1>
+
+      <div v-if="loading" class="text-gray-500">読み込み中...</div>
+      <div v-else-if="orders.length === 0" class="bg-white rounded-2xl shadow p-8 text-center">
+        <p class="text-gray-500 text-lg">注文履歴がありません</p>
+        <router-link to="/products" class="text-blue-600 hover:underline mt-2 inline-block">
+          商品一覧を見る
+        </router-link>
+      </div>
+      <div v-else class="space-y-4">
+        <router-link
+          v-for="order in orders"
+          :key="order.id"
+          :to="'/orders/' + order.id"
+          class="bg-white rounded-2xl shadow p-6 flex items-center justify-between hover:shadow-lg transition block"
+        >
+          <div>
+            <p class="font-semibold text-gray-800">注文 #{{ order.id }}</p>
+            <p class="text-gray-500 text-sm">{{ formatDate(order.createdAt) }}</p>
+            <p class="text-gray-500 text-sm">{{ order.items?.length || 0 }} 点の商品</p>
+          </div>
+          <div class="text-right">
+            <span
+              class="px-3 py-1 rounded-full text-xs font-semibold"
+              :class="statusClass(order.status)"
+            >
+              {{ statusLabel(order.status) }}
+            </span>
+            <p class="text-lg font-bold text-gray-800 mt-1">
+              &yen;{{ order.totalAmount.toLocaleString() }}
+            </p>
+          </div>
+        </router-link>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { fetchOrders, type Order } from '@/api/orders'
+
+const orders = ref<Order[]>([])
+const loading = ref(true)
+
+onMounted(async () => {
+  try {
+    orders.value = await fetchOrders()
+  } finally {
+    loading.value = false
+  }
+})
+
+const formatDate = (dateStr: string) => {
+  const d = new Date(dateStr)
+  return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+}
+
+const statusLabel = (s: string) =>
+  ({ PENDING: '処理中', PAID: '支払済', SHIPPED: '発送済', DELIVERED: '配達完了', CANCELLED: 'キャンセル' }[s] || s)
+
+const statusClass = (s: string) =>
+  ({
+    PENDING: 'bg-yellow-100 text-yellow-700',
+    PAID: 'bg-blue-100 text-blue-700',
+    SHIPPED: 'bg-purple-100 text-purple-700',
+    DELIVERED: 'bg-green-100 text-green-700',
+    CANCELLED: 'bg-red-100 text-red-700',
+  }[s] || 'bg-gray-100 text-gray-700')
+</script>

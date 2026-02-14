@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 
-
 /**
  * ログインリクエストの DTO
  * フロントから送られてくるログイン情報を受け取る

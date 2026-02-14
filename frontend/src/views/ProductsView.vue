@@ -3,12 +3,17 @@
     <h2 class="text-2xl font-bold mb-4">商品一覧</h2>
     <div v-if="products.length === 0">商品がありません。</div>
     <div class="grid grid-cols-3 gap-4">
-      <div v-for="p in products" :key="p.id" class="border p-4 rounded">
+      <router-link
+        v-for="p in products"
+        :key="p.id"
+        :to="'/products/' + p.id"
+        class="border p-4 rounded hover:shadow-lg transition block"
+      >
         <img :src="p.imageUrl" alt="" class="w-full h-40 object-cover mb-2" />
         <h3 class="font-bold">{{ p.name }}</h3>
         <p>{{ p.description }}</p>
         <p class="text-blue-600 font-bold">¥{{ p.price.toLocaleString() }} 円</p>
-      </div>
+      </router-link>
     </div>
   </div>
 </template>

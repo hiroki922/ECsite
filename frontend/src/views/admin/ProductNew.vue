@@ -5,7 +5,7 @@
     <form @submit.prevent="submitProduct">
       <div class="mb-3">
         <label class="block font-semibold">商品名</label>
-        <input v-model="product.name" type="text" class="border rounded p-2 w-full" required />
+        <BaseInput v-model="product.name" required class="border rounded p-2 w-full" />
       </div>
 
       <div class="mb-3">
@@ -35,7 +35,7 @@
 
       <div class="mb-3">
         <label class="block font-semibold">画像URL</label>
-        <input v-model="product.imageUrl" type="text" class="border rounded p-2 w-full" />
+        <BaseInput v-model="product.imageUrl" class="border rounded p-2 w-full" />
       </div>
 
       <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">登録する</button>
@@ -54,6 +54,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import axios from 'axios'
+import BaseInput from '@/components/BaseInput.vue'
 
 const product = ref({
   name: '',
@@ -71,8 +72,8 @@ const submitProduct = async () => {
   error.value = ''
 
   try {
-    const res = await axios.post('/api/admin/products', product.value, {
-      withCredentials: true, // ← セッション送るため必須
+    const res = await axios.post('http://localhost:8080/api/admin/products', product.value, {
+      withCredentials: true,
     })
 
     message.value = '商品が登録されました！'
