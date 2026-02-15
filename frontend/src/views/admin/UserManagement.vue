@@ -1,40 +1,40 @@
 <template>
-  <div class="min-h-screen bg-gray-100">
-    <div class="max-w-6xl mx-auto px-6 py-8 space-y-6">
+  <div class="py-10">
+    <div class="max-w-7xl mx-auto px-6 space-y-6">
       <div>
-        <h1 class="text-3xl font-bold text-gray-800">ユーザー管理</h1>
-        <p class="text-gray-500 text-sm">ユーザーのロール変更ができます</p>
+        <h1 class="text-3xl font-bold text-gray-800 tracking-tight">ユーザー管理</h1>
+        <p class="text-gray-400 text-sm mt-1">ユーザーのロール変更ができます</p>
       </div>
 
-      <div class="bg-white rounded-2xl shadow p-6">
-        <div v-if="loading" class="text-gray-500">読み込み中...</div>
+      <div class="bg-white rounded-2xl shadow-sm p-6">
+        <div v-if="loading" class="text-gray-400">読み込み中...</div>
         <div v-else class="overflow-auto">
           <table class="min-w-full text-sm">
-            <thead class="text-left text-gray-500 border-b">
+            <thead class="text-left text-gray-400 border-b">
               <tr>
-                <th class="py-2 pr-4">ID</th>
-                <th class="py-2 pr-4">名前</th>
-                <th class="py-2 pr-4">メール</th>
-                <th class="py-2 pr-4">ロール</th>
-                <th class="py-2">操作</th>
+                <th class="py-3 pr-4 font-medium">ID</th>
+                <th class="py-3 pr-4 font-medium">名前</th>
+                <th class="py-3 pr-4 font-medium">メール</th>
+                <th class="py-3 pr-4 font-medium">ロール</th>
+                <th class="py-3 font-medium">操作</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="u in users" :key="u.id" class="border-b last:border-0">
-                <td class="py-3 pr-4 text-gray-500">{{ u.id }}</td>
-                <td class="py-3 pr-4 font-medium text-gray-800">{{ u.name }}</td>
-                <td class="py-3 pr-4 text-gray-600">{{ u.email }}</td>
-                <td class="py-3 pr-4">
+              <tr v-for="u in users" :key="u.id" class="border-b last:border-0 hover:bg-gray-50 transition">
+                <td class="py-4 pr-4 text-gray-400">{{ u.id }}</td>
+                <td class="py-4 pr-4 font-medium text-gray-800">{{ u.name }}</td>
+                <td class="py-4 pr-4 text-gray-500">{{ u.email }}</td>
+                <td class="py-4 pr-4">
                   <span
-                    class="px-2 py-1 rounded text-xs font-semibold"
-                    :class="u.role === 'ADMIN' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'"
+                    class="px-2.5 py-1 rounded-full text-xs font-semibold"
+                    :class="u.role === 'ADMIN' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'"
                   >
                     {{ u.role === 'ADMIN' ? '管理者' : '一般' }}
                   </span>
                 </td>
-                <td class="py-3">
+                <td class="py-4">
                   <button
-                    class="text-blue-600 hover:underline text-sm"
+                    class="text-indigo-600 hover:text-indigo-800 text-sm font-medium transition"
                     @click="toggleRole(u)"
                   >
                     {{ u.role === 'ADMIN' ? '一般ユーザーにする' : '管理者にする' }}
@@ -46,7 +46,7 @@
         </div>
       </div>
 
-      <router-link to="/admin" class="text-blue-600 hover:underline text-sm">
+      <router-link to="/admin" class="text-indigo-600 hover:text-indigo-800 text-sm transition">
         &larr; ダッシュボードに戻る
       </router-link>
     </div>

@@ -1,12 +1,12 @@
 <template>
-  <div class="bg-gray-100 min-h-screen py-10">
-    <div class="max-w-4xl mx-auto px-4 space-y-6">
-      <h1 class="text-3xl font-bold text-gray-800">注文履歴</h1>
+  <div class="py-12">
+    <div class="max-w-4xl mx-auto px-6 space-y-6">
+      <h1 class="text-3xl font-bold text-gray-800 tracking-tight">注文履歴</h1>
 
-      <div v-if="loading" class="text-gray-500">読み込み中...</div>
-      <div v-else-if="orders.length === 0" class="bg-white rounded-2xl shadow p-8 text-center">
-        <p class="text-gray-500 text-lg">注文履歴がありません</p>
-        <router-link to="/products" class="text-blue-600 hover:underline mt-2 inline-block">
+      <div v-if="loading" class="text-gray-400">読み込み中...</div>
+      <div v-else-if="orders.length === 0" class="bg-white rounded-2xl shadow-sm p-10 text-center">
+        <p class="text-gray-400 text-lg">注文履歴がありません</p>
+        <router-link to="/products" class="text-indigo-600 hover:text-indigo-800 mt-3 inline-block transition">
           商品一覧を見る
         </router-link>
       </div>
@@ -15,12 +15,12 @@
           v-for="order in orders"
           :key="order.id"
           :to="'/orders/' + order.id"
-          class="bg-white rounded-2xl shadow p-6 flex items-center justify-between hover:shadow-lg transition block"
+          class="bg-white rounded-2xl shadow-sm p-6 flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 block"
         >
           <div>
             <p class="font-semibold text-gray-800">注文 #{{ order.id }}</p>
-            <p class="text-gray-500 text-sm">{{ formatDate(order.createdAt) }}</p>
-            <p class="text-gray-500 text-sm">{{ order.items?.length || 0 }} 点の商品</p>
+            <p class="text-gray-400 text-sm">{{ formatDate(order.createdAt) }}</p>
+            <p class="text-gray-400 text-sm">{{ order.items?.length || 0 }} 点の商品</p>
           </div>
           <div class="text-right">
             <span

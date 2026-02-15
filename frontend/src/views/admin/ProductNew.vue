@@ -1,53 +1,42 @@
 <template>
-  <div class="max-w-lg mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">商品登録</h1>
+  <div class="py-10">
+    <div class="max-w-lg mx-auto px-6">
+      <router-link to="/admin/products" class="text-indigo-600 hover:text-indigo-800 text-sm mb-6 inline-block transition">
+        &larr; 商品一覧に戻る
+      </router-link>
 
-    <form @submit.prevent="submitProduct">
-      <div class="mb-3">
-        <label class="block font-semibold">商品名</label>
-        <BaseInput v-model="product.name" required class="border rounded p-2 w-full" />
-      </div>
+      <h1 class="text-2xl font-bold text-gray-800 mb-6 tracking-tight">商品登録</h1>
 
-      <div class="mb-3">
-        <label class="block font-semibold">説明</label>
-        <textarea v-model="product.description" class="border rounded p-2 w-full"></textarea>
-      </div>
+      <form @submit.prevent="submitProduct" class="bg-white rounded-2xl shadow-sm p-6 space-y-5">
+        <div>
+          <label class="block font-semibold text-sm text-gray-700 mb-1.5">商品名</label>
+          <BaseInput v-model="product.name" required />
+        </div>
+        <div>
+          <label class="block font-semibold text-sm text-gray-700 mb-1.5">説明</label>
+          <textarea v-model="product.description" class="w-full border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"></textarea>
+        </div>
+        <div>
+          <label class="block font-semibold text-sm text-gray-700 mb-1.5">価格</label>
+          <input v-model.number="product.price" type="number" class="w-full border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" required />
+        </div>
+        <div>
+          <label class="block font-semibold text-sm text-gray-700 mb-1.5">在庫</label>
+          <input v-model.number="product.stock" type="number" class="w-full border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300" required />
+        </div>
+        <div>
+          <label class="block font-semibold text-sm text-gray-700 mb-1.5">画像URL</label>
+          <BaseInput v-model="product.imageUrl" />
+        </div>
 
-      <div class="mb-3">
-        <label class="block font-semibold">価格</label>
-        <input
-          v-model.number="product.price"
-          type="number"
-          class="border rounded p-2 w-full"
-          required
-        />
-      </div>
+        <button type="submit" class="w-full bg-indigo-600 text-white py-2.5 rounded-xl font-semibold hover:bg-indigo-700 hover:shadow-md transition-all duration-200">
+          登録する
+        </button>
 
-      <div class="mb-3">
-        <label class="block font-semibold">在庫</label>
-        <input
-          v-model.number="product.stock"
-          type="number"
-          class="border rounded p-2 w-full"
-          required
-        />
-      </div>
-
-      <div class="mb-3">
-        <label class="block font-semibold">画像URL</label>
-        <BaseInput v-model="product.imageUrl" class="border rounded p-2 w-full" />
-      </div>
-
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">登録する</button>
-    </form>
-
-    <p v-if="message" class="text-green-700 mt-4">
-      {{ message }}
-    </p>
-
-    <p v-if="error" class="text-red-600 mt-4">
-      {{ error }}
-    </p>
+        <p v-if="message" class="text-emerald-600 text-sm text-center">{{ message }}</p>
+        <p v-if="error" class="text-rose-500 text-sm text-center">{{ error }}</p>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -76,7 +65,7 @@ const submitProduct = async () => {
 
   try {
     await createProduct(product.value)
-    message.value = '商品が登録されました！'
+    message.value = '商品が登録されました'
     setTimeout(() => router.push('/admin/products'), 1000)
   } catch (err: any) {
     error.value = err.response?.data?.error || '登録に失敗しました'

@@ -1,71 +1,63 @@
 <template>
-  <div class="bg-gray-100 min-h-screen py-10">
-    <div class="max-w-4xl mx-auto px-4 space-y-6">
-      <h1 class="text-3xl font-bold text-gray-800">ご注文の確認</h1>
+  <div class="py-12">
+    <div class="max-w-4xl mx-auto px-6 space-y-6">
+      <h1 class="text-3xl font-bold text-gray-800 tracking-tight">ご注文の確認</h1>
 
-      <!-- 注文商品 -->
-      <section class="bg-white rounded-2xl shadow p-6">
+      <section class="bg-white rounded-2xl shadow-sm p-6">
         <h2 class="text-xl font-semibold text-gray-800 mb-4">注文内容</h2>
         <div class="divide-y">
-          <div v-for="item in cart.items" :key="item.id" class="py-3 flex items-center gap-4">
-            <img :src="item.productImageUrl" class="w-16 h-16 object-cover rounded" />
+          <div v-for="item in cart.items" :key="item.id" class="py-4 flex items-center gap-4">
+            <img :src="item.productImageUrl" class="w-16 h-16 object-cover rounded-xl" />
             <div class="flex-1">
               <p class="font-semibold text-gray-800">{{ item.productName }}</p>
-              <p class="text-gray-500 text-sm">&yen;{{ item.productPrice.toLocaleString() }} x {{ item.quantity }}</p>
+              <p class="text-gray-400 text-sm">&yen;{{ item.productPrice.toLocaleString() }} x {{ item.quantity }}</p>
             </div>
             <p class="font-bold">&yen;{{ (item.productPrice * item.quantity).toLocaleString() }}</p>
           </div>
         </div>
         <div class="mt-4 pt-4 border-t flex justify-between">
           <p class="text-lg font-bold">合計</p>
-          <p class="text-lg font-bold text-blue-600">&yen;{{ cart.totalAmount.toLocaleString() }}</p>
+          <p class="text-lg font-bold text-indigo-600">&yen;{{ cart.totalAmount.toLocaleString() }}</p>
         </div>
       </section>
 
-      <!-- 配送先選択 -->
-      <section class="bg-white rounded-2xl shadow p-6">
+      <section class="bg-white rounded-2xl shadow-sm p-6">
         <h2 class="text-xl font-semibold text-gray-800 mb-4">配送先を選択</h2>
-        <div v-if="addresses.length === 0" class="text-gray-500">
+        <div v-if="addresses.length === 0" class="text-gray-400">
           配送先が登録されていません。
-          <router-link to="/addresses" class="text-blue-600 hover:underline">配送先を登録する</router-link>
+          <router-link to="/addresses" class="text-indigo-600 hover:text-indigo-800 transition">配送先を登録する</router-link>
         </div>
         <div v-else class="space-y-3">
           <label
             v-for="addr in addresses"
             :key="addr.id"
-            class="block border rounded-xl p-4 cursor-pointer transition"
-            :class="selectedAddressId === addr.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-400'"
+            class="block border rounded-2xl p-4 cursor-pointer transition-all duration-200"
+            :class="selectedAddressId === addr.id ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300'"
           >
-            <input
-              type="radio"
-              :value="addr.id"
-              v-model="selectedAddressId"
-              class="mr-3"
-            />
+            <input type="radio" :value="addr.id" v-model="selectedAddressId" class="mr-3" />
             <span class="font-semibold">{{ addr.name }}</span>
-            <span v-if="addr.isDefault" class="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">デフォルト</span>
-            <p class="text-gray-600 text-sm mt-1 ml-6">
+            <span v-if="addr.isDefault" class="ml-2 text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">デフォルト</span>
+            <p class="text-gray-500 text-sm mt-1 ml-6">
               〒{{ addr.postalCode }} {{ addr.prefecture }} {{ addr.city }} {{ addr.addressLine }}
             </p>
-            <p class="text-gray-500 text-sm ml-6">TEL: {{ addr.phone }}</p>
+            <p class="text-gray-400 text-sm ml-6">TEL: {{ addr.phone }}</p>
           </label>
         </div>
       </section>
 
-      <!-- 注文確定 -->
       <div class="flex items-center justify-between">
-        <router-link to="/cart" class="text-blue-600 hover:underline">&larr; カートに戻る</router-link>
+        <router-link to="/cart" class="text-indigo-600 hover:text-indigo-800 transition">&larr; カートに戻る</router-link>
         <button
           :disabled="!selectedAddressId || cart.items.length === 0 || submitting"
-          class="px-8 py-3 font-semibold text-white rounded-lg transition"
-          :class="selectedAddressId && !submitting ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'"
+          class="px-8 py-3 font-semibold text-white rounded-xl transition-all duration-200"
+          :class="selectedAddressId && !submitting ? 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-md' : 'bg-gray-300 cursor-not-allowed'"
           @click="handleOrder"
         >
           {{ submitting ? '処理中...' : '注文を確定する' }}
         </button>
       </div>
 
-      <p v-if="errorMessage" class="text-red-600 text-center">{{ errorMessage }}</p>
+      <p v-if="errorMessage" class="text-rose-500 text-center">{{ errorMessage }}</p>
     </div>
   </div>
 </template>

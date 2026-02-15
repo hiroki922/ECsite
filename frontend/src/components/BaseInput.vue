@@ -27,17 +27,11 @@ const onInput = (event: Event) => {
 const type = props.type || 'text'
 
 const baseClass =
-  'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300 text-gray-800 placeholder-gray-400'
+  'w-full px-3 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent text-gray-800 placeholder-gray-400 transition'
 </script>
 
 <style scoped>
 input::placeholder {
-  color: rgba(0, 0, 0, 0.4);
-}
-
-@media (prefers-color-scheme: dark) {
-  input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
-  }
+  color: rgba(0, 0, 0, 0.35);
 }
 </style>

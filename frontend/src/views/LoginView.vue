@@ -1,38 +1,34 @@
 <template>
-  <div class="flex justify-center items-center min-h-screen bg-gray-100">
-    <div class="bg-white p-10 rounded-2xl shadow-lg w-96">
-      <h1 class="text-3xl font-bold text-center mb-6 text-gray-700">ログイン</h1>
+  <div class="flex justify-center items-center min-h-[80vh] py-12">
+    <div class="bg-white p-10 rounded-2xl shadow-sm w-full max-w-md">
+      <h1 class="text-3xl font-bold text-center mb-8 text-gray-800 tracking-tight">ログイン</h1>
 
-      <form @submit.prevent="handleLogin">
-        <!-- メールアドレス -->
-        <div class="mb-4">
-          <BaseInput v-model="email" type="email" placeholder="メールアドレス" />
+      <form @submit.prevent="handleLogin" class="space-y-5">
+        <div>
+          <label class="block text-sm font-medium mb-1.5 text-gray-600">メールアドレス</label>
+          <BaseInput v-model="email" type="email" placeholder="example@mail.com" />
         </div>
 
-        <!-- パスワード -->
-        <div class="mb-4">
-          <BaseInput v-model="password" type="password" placeholder="パスワード" />
+        <div>
+          <label class="block text-sm font-medium mb-1.5 text-gray-600">パスワード</label>
+          <BaseInput v-model="password" type="password" placeholder="********" />
         </div>
 
-        <!-- ログインボタン -->
-        <div class="mt-6">
-          <button
-            type="submit"
-            class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
-          >
-            ログイン
-          </button>
-        </div>
+        <button
+          type="submit"
+          class="w-full bg-indigo-600 text-white py-2.5 rounded-xl font-semibold hover:bg-indigo-700 hover:shadow-md transition-all duration-200"
+        >
+          ログイン
+        </button>
 
-        <!-- 登録フォームへの案内 -->
-        <div class="text-sm text-center text-gray-600 mt-4">
+        <div class="text-sm text-center text-gray-500 pt-2">
           <p>アカウントをお持ちでないですか？</p>
-          <p>
-            <router-link to="/register" class="text-blue-500 hover:underline">登録はこちら</router-link>
-          </p>
+          <router-link to="/register" class="text-indigo-600 hover:text-indigo-800 font-medium transition">
+            新規登録はこちら
+          </router-link>
         </div>
-        <!-- エラーメッセージ -->
-        <p v-if="errorMessage" class="text-red-500 text-sm mt-4 text-center">
+
+        <p v-if="errorMessage" class="text-rose-500 text-sm text-center">
           {{ errorMessage }}
         </p>
       </form>

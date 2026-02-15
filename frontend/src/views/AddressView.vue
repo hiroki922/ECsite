@@ -1,108 +1,99 @@
 <template>
-  <div class="bg-gray-100 min-h-screen py-10">
-    <div class="max-w-4xl mx-auto px-4 space-y-6">
+  <div class="py-12">
+    <div class="max-w-4xl mx-auto px-6 space-y-6">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-bold text-gray-800">配送先設定</h1>
-          <p class="text-gray-500">配送先を登録・編集できます</p>
+          <h1 class="text-3xl font-bold text-gray-800 tracking-tight">配送先設定</h1>
+          <p class="text-gray-400 text-sm mt-1">配送先を登録・編集できます</p>
         </div>
-        <span class="text-sm text-gray-500">登録件数: {{ addresses.length }} 件</span>
+        <span class="text-sm text-gray-400">登録件数: {{ addresses.length }} 件</span>
       </div>
 
-      <p v-if="apiError" class="text-red-600 text-sm">{{ apiError }}</p>
+      <p v-if="apiError" class="text-rose-500 text-sm">{{ apiError }}</p>
 
-      <section class="bg-white rounded-2xl shadow p-6">
+      <section class="bg-white rounded-2xl shadow-sm p-6">
         <h2 class="text-xl font-semibold text-gray-800 mb-4">新規追加</h2>
         <form class="grid grid-cols-1 md:grid-cols-2 gap-4" @submit.prevent="handleSubmit">
           <div>
-            <label class="block text-sm text-gray-600 mb-1">氏名 *</label>
+            <label class="block text-sm font-medium text-gray-600 mb-1.5">氏名 *</label>
             <BaseInput v-model="form.name" placeholder="山田 太郎" required />
           </div>
-
           <div>
-            <label class="block text-sm text-gray-600 mb-1">電話番号 *</label>
+            <label class="block text-sm font-medium text-gray-600 mb-1.5">電話番号 *</label>
             <BaseInput v-model="form.phone" type="tel" placeholder="09012345678" required />
           </div>
-
           <div>
-            <label class="block text-sm text-gray-600 mb-1">郵便番号 *</label>
+            <label class="block text-sm font-medium text-gray-600 mb-1.5">郵便番号 *</label>
             <BaseInput v-model="form.postalCode" placeholder="123-4567" required />
           </div>
-
           <div>
-            <label class="block text-sm text-gray-600 mb-1">都道府県 *</label>
+            <label class="block text-sm font-medium text-gray-600 mb-1.5">都道府県 *</label>
             <BaseInput v-model="form.prefecture" placeholder="東京都" required />
           </div>
-
           <div>
-            <label class="block text-sm text-gray-600 mb-1">市区町村 *</label>
+            <label class="block text-sm font-medium text-gray-600 mb-1.5">市区町村 *</label>
             <BaseInput v-model="form.city" placeholder="渋谷区" required />
           </div>
-
           <div>
-            <label class="block text-sm text-gray-600 mb-1">番地・建物名 *</label>
-            <BaseInput
-              v-model="form.addressLine"
-              placeholder="1-2-3 サンプルマンション101"
-              required
-            />
+            <label class="block text-sm font-medium text-gray-600 mb-1.5">番地・建物名 *</label>
+            <BaseInput v-model="form.addressLine" placeholder="1-2-3 サンプルマンション101" required />
           </div>
 
           <div class="md:col-span-2 flex items-center gap-3">
-            <input id="isDefault" v-model="form.isDefault" type="checkbox" class="h-4 w-4" />
-            <label for="isDefault" class="text-sm text-gray-700">デフォルト配送先に設定する</label>
+            <input id="isDefault" v-model="form.isDefault" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600" />
+            <label for="isDefault" class="text-sm text-gray-600">デフォルト配送先に設定する</label>
           </div>
 
           <div class="md:col-span-2 flex flex-wrap items-center gap-3">
             <button
               type="submit"
-              class="px-5 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition"
+              class="px-6 py-2.5 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 hover:shadow-md transition-all duration-200"
             >
               追加する
             </button>
-            <p v-if="errors.length" class="text-sm text-red-600">{{ errors.join(' / ') }}</p>
+            <p v-if="errors.length" class="text-sm text-rose-500">{{ errors.join(' / ') }}</p>
           </div>
         </form>
       </section>
 
-      <section class="bg-white rounded-2xl shadow p-6 space-y-4">
+      <section class="bg-white rounded-2xl shadow-sm p-6 space-y-4">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold text-gray-800">登録済み配送先</h2>
-          <span class="text-sm text-gray-500">デフォルトは1件のみ設定できます</span>
+          <span class="text-sm text-gray-400">デフォルトは1件のみ設定できます</span>
         </div>
-        <div v-if="addresses.length === 0" class="text-gray-500">まだ配送先がありません。</div>
+        <div v-if="addresses.length === 0" class="text-gray-400">まだ配送先がありません。</div>
         <div v-else class="grid grid-cols-1 gap-3">
           <div
             v-for="address in addresses"
             :key="address.id"
-            class="border rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3"
+            class="border border-gray-200 rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3 hover:border-gray-300 transition"
           >
             <div class="space-y-1">
               <div class="flex items-center gap-2">
                 <p class="text-lg font-semibold text-gray-800">{{ address.name }}</p>
                 <span
                   v-if="address.isDefault"
-                  class="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700"
+                  class="px-2 py-0.5 text-xs rounded-full bg-indigo-100 text-indigo-700"
                 >
                   デフォルト
                 </span>
               </div>
-              <p class="text-gray-700 text-sm">
+              <p class="text-gray-500 text-sm">
                 〒{{ address.postalCode }} {{ address.prefecture }} {{ address.city }}
               </p>
-              <p class="text-gray-700 text-sm">{{ address.addressLine }}</p>
-              <p class="text-gray-500 text-sm">TEL: {{ address.phone }}</p>
+              <p class="text-gray-500 text-sm">{{ address.addressLine }}</p>
+              <p class="text-gray-400 text-sm">TEL: {{ address.phone }}</p>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-4">
               <button
-                class="text-blue-600 hover:underline text-sm"
+                class="text-indigo-600 hover:text-indigo-800 text-sm font-medium transition"
                 :disabled="address.isDefault"
                 @click="setDefault(address.id)"
               >
                 デフォルトにする
               </button>
               <button
-                class="text-red-500 hover:underline text-sm"
+                class="text-rose-500 hover:text-rose-700 text-sm font-medium transition"
                 @click="removeAddress(address.id)"
               >
                 削除

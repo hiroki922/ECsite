@@ -1,51 +1,51 @@
 <template>
-  <div class="bg-gray-100 min-h-screen py-10">
-    <div class="max-w-4xl mx-auto px-4">
-      <router-link to="/products" class="text-blue-600 hover:underline text-sm mb-4 inline-block">
+  <div class="py-12">
+    <div class="max-w-5xl mx-auto px-6">
+      <router-link to="/products" class="text-indigo-600 hover:text-indigo-800 text-sm mb-6 inline-block transition">
         &larr; 商品一覧に戻る
       </router-link>
 
-      <div v-if="loading" class="text-gray-500">読み込み中...</div>
-      <div v-else-if="error" class="text-red-600">{{ error }}</div>
-      <div v-else-if="product" class="bg-white rounded-2xl shadow p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div v-if="loading" class="text-gray-400">読み込み中...</div>
+      <div v-else-if="error" class="text-rose-500">{{ error }}</div>
+      <div v-else-if="product" class="bg-white rounded-2xl shadow-sm p-8 grid grid-cols-1 md:grid-cols-2 gap-10">
         <div>
           <img
             :src="product.imageUrl"
             :alt="product.name"
-            class="w-full rounded-lg object-cover"
+            class="w-full rounded-2xl object-cover"
           />
         </div>
-        <div class="space-y-4">
-          <h1 class="text-3xl font-bold text-gray-800">{{ product.name }}</h1>
-          <p class="text-gray-600">{{ product.description }}</p>
-          <p class="text-3xl font-bold text-blue-600">
+        <div class="space-y-5">
+          <h1 class="text-3xl font-bold text-gray-800 tracking-tight">{{ product.name }}</h1>
+          <p class="text-gray-500 leading-relaxed">{{ product.description }}</p>
+          <p class="text-3xl font-bold text-indigo-600">
             &yen;{{ product.price.toLocaleString() }}
           </p>
-          <p :class="product.stock > 0 ? 'text-green-600' : 'text-red-500'" class="text-sm font-semibold">
+          <p :class="product.stock > 0 ? 'text-emerald-600' : 'text-rose-500'" class="text-sm font-semibold">
             {{ product.stock > 0 ? `在庫: ${product.stock}個` : '在庫切れ' }}
           </p>
 
           <div v-if="product.stock > 0" class="flex items-center gap-3">
-            <label class="text-sm text-gray-600">数量:</label>
+            <label class="text-sm text-gray-500">数量:</label>
             <input
               v-model.number="quantity"
               type="number"
               min="1"
               :max="product.stock"
-              class="w-20 border rounded px-2 py-1 text-center"
+              class="w-20 border border-gray-200 rounded-xl px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-indigo-300"
             />
           </div>
 
           <button
             :disabled="product.stock === 0 || !isLoggedIn"
-            class="w-full py-3 rounded-lg font-semibold text-white transition"
-            :class="product.stock > 0 && isLoggedIn ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'"
+            class="w-full py-3 rounded-xl font-semibold text-white transition-all duration-200"
+            :class="product.stock > 0 && isLoggedIn ? 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-md' : 'bg-gray-300 cursor-not-allowed'"
             @click="handleAddToCart"
           >
             {{ !isLoggedIn ? 'ログインしてください' : 'カートに追加' }}
           </button>
-          <p v-if="addMessage" class="text-green-600 text-sm text-center">{{ addMessage }}</p>
-          <p v-if="addError" class="text-red-500 text-sm text-center">{{ addError }}</p>
+          <p v-if="addMessage" class="text-emerald-600 text-sm text-center">{{ addMessage }}</p>
+          <p v-if="addError" class="text-rose-500 text-sm text-center">{{ addError }}</p>
         </div>
       </div>
     </div>
