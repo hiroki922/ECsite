@@ -75,6 +75,11 @@ import { computed, onMounted } from 'vue'
 
 const router = useRouter()
 
+const client = axios.create({
+  baseURL: 'http://localhost:8080/api',
+  withCredentials: true,
+})
+
 const auth = useAuthStore()
 const cartStore = useCartStore()
 const homePath = computed(() => (auth.isLoggedIn && auth.role === 'ADMIN' ? '/admin' : '/'))
@@ -87,7 +92,7 @@ onMounted(() => {
 
 async function logout(): Promise<void> {
   try {
-    await axios.post('http://localhost:8080/api/logout', {}, { withCredentials: true })
+    await client.post('/logout')
   } finally {
     auth.clearUser()
     router.push('/login')
