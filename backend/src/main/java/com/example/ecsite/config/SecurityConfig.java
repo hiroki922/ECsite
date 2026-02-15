@@ -1,5 +1,6 @@
 package com.example.ecsite.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -19,6 +20,9 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Value("${app.cors.allowed-origin:http://localhost:5173}")
+    private String allowedOrigin;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -32,14 +36,10 @@ public class SecurityConfig {
                         // 全てのユーザがOK
                         .requestMatchers("/api/register", "/api/login", "/api/logout", "/api/me").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-                        // 住所系API → 認証必須
+                        // 住所・カート・注文API → 認証必須
                         .requestMatchers("/api/addresses/**").authenticated()
-                        .requestMatchers("/api/addresses").authenticated()
-                        // カート・注文API → 認証必須
                         .requestMatchers("/api/cart/**").authenticated()
-                        .requestMatchers("/api/cart").authenticated()
                         .requestMatchers("/api/orders/**").authenticated()
-                        .requestMatchers("/api/orders").authenticated()
                         // それ以外は認証必須
                         .anyRequest().authenticated()
                 )
@@ -51,7 +51,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedOrigins(List.of(allowedOrigin));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
