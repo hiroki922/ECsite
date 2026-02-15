@@ -58,6 +58,14 @@ public class AddressService {
         address.setAddressLine(request.getAddressLine());
         address.setPhone(request.getPhone());
 
+        // デフォルト設定の更新
+        if (Boolean.TRUE.equals(request.getIsDefault())) {
+            clearDefault(user.getId());
+            address.setIsDefault(true);
+        } else {
+            address.setIsDefault(false);
+        }
+
         Address saved = addressRepository.save(address);
         return toResponse(saved);
     }
