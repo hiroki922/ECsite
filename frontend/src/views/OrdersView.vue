@@ -42,6 +42,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { fetchOrders, type Order } from '@/api/orders'
+import { statusLabel, statusClass } from '@/lib/orderStatus'
 
 const orders = ref<Order[]>([])
 const loading = ref(true)
@@ -58,16 +59,4 @@ const formatDate = (dateStr: string) => {
   const d = new Date(dateStr)
   return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
-
-const statusLabel = (s: string) =>
-  ({ PENDING: '処理中', PAID: '支払済', SHIPPED: '発送済', DELIVERED: '配達完了', CANCELLED: 'キャンセル' }[s] || s)
-
-const statusClass = (s: string) =>
-  ({
-    PENDING: 'bg-yellow-100 text-yellow-700',
-    PAID: 'bg-blue-100 text-blue-700',
-    SHIPPED: 'bg-purple-100 text-purple-700',
-    DELIVERED: 'bg-green-100 text-green-700',
-    CANCELLED: 'bg-red-100 text-red-700',
-  }[s] || 'bg-gray-100 text-gray-700')
 </script>
