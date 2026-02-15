@@ -119,7 +119,13 @@ public class OrderService {
     public OrderResponse updateOrderStatus(Long id, String status) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("注文が見つかりません"));
-        order.setStatus(OrderStatus.valueOf(status));
+        OrderStatus newStatus;
+        try {
+            newStatus = OrderStatus.valueOf(status);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("無効な注文ステータスです: " + status);
+        }
+        order.setStatus(newStatus);
         return toResponse(orderRepository.save(order));
     }
 
