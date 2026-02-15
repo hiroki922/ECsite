@@ -69,9 +69,11 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
 import { useCartStore } from '@/stores/cart'
-import router from '@/router'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { computed, onMounted } from 'vue'
+
+const router = useRouter()
 
 const auth = useAuthStore()
 const cartStore = useCartStore()

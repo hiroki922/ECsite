@@ -108,6 +108,22 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
+    public List<OrderResponse> getAllOrders() {
+        return orderRepository.findAllByOrderByCreatedAtDesc()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public OrderResponse updateOrderStatus(Long id, String status) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("注文が見つかりません"));
+        order.setStatus(OrderStatus.valueOf(status));
+        return toResponse(orderRepository.save(order));
+    }
+
+    @Transactional(readOnly = true)
     public List<OrderResponse> getRecentOrders() {
         return orderRepository.findTop10ByOrderByCreatedAtDesc()
                 .stream()

@@ -41,11 +41,11 @@
           <p class="text-gray-500 text-sm mt-1">ユーザー一覧・ロール変更</p>
         </router-link>
         <router-link
-          to="/admin/products"
+          to="/admin/orders"
           class="bg-white rounded-2xl shadow p-6 hover:shadow-lg transition"
         >
-          <h3 class="text-lg font-bold text-gray-800">在庫管理</h3>
-          <p class="text-gray-500 text-sm mt-1">在庫状況の確認</p>
+          <h3 class="text-lg font-bold text-gray-800">注文管理</h3>
+          <p class="text-gray-500 text-sm mt-1">注文一覧・ステータス管理</p>
         </router-link>
       </section>
 

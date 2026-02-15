@@ -47,3 +47,13 @@ export const updateUserRole = async (id: number, role: string): Promise<AdminUse
   const res = await client.put<AdminUser>(`/admin/users/${id}/role`, { role })
   return res.data
 }
+
+export const fetchAllOrders = async (): Promise<AdminOrder[]> => {
+  const res = await client.get<AdminOrder[]>('/admin/orders')
+  return res.data
+}
+
+export const updateOrderStatus = async (id: number, status: string): Promise<AdminOrder> => {
+  const res = await client.put<AdminOrder>(`/admin/orders/${id}/status`, { status })
+  return res.data
+}
