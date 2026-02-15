@@ -81,6 +81,7 @@
 import { ref, onMounted } from 'vue'
 import StatCard from '@/components/StatCard.vue'
 import { fetchDashboardStats, fetchRecentOrders, type DashboardStats, type AdminOrder } from '@/api/admin'
+import { statusLabel, statusClass } from '@/lib/orderStatus'
 
 const stats = ref<DashboardStats>({ productCount: 0, userCount: 0, pendingOrderCount: 0, totalOrderCount: 0 })
 const recentOrders = ref<AdminOrder[]>([])
@@ -94,16 +95,4 @@ onMounted(async () => {
     console.error('ダッシュボードデータの取得に失敗しました', err)
   }
 })
-
-const statusLabel = (s: string) =>
-  ({ PENDING: '処理中', PAID: '支払済', SHIPPED: '発送済', DELIVERED: '配達完了', CANCELLED: 'キャンセル' }[s] || s)
-
-const statusClass = (s: string) =>
-  ({
-    PENDING: 'bg-yellow-100 text-yellow-700',
-    PAID: 'bg-blue-100 text-blue-700',
-    SHIPPED: 'bg-purple-100 text-purple-700',
-    DELIVERED: 'bg-green-100 text-green-700',
-    CANCELLED: 'bg-red-100 text-red-700',
-  }[s] || 'bg-gray-100 text-gray-700')
 </script>
