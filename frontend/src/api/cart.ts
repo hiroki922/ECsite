@@ -1,4 +1,4 @@
-import axios from 'axios'
+import client from '@/lib/apiClient'
 
 export type CartItem = {
   id: number
@@ -14,11 +14,6 @@ export type CartItemPayload = {
   productId: number
   quantity: number
 }
-
-const client = axios.create({
-  baseURL: 'http://localhost:8080/api',
-  withCredentials: true,
-})
 
 export const fetchCart = async (): Promise<CartItem[]> => {
   const res = await client.get<CartItem[]>('/cart')

@@ -1,4 +1,4 @@
-import axios from 'axios'
+import client from '@/lib/apiClient'
 
 export type AddressPayload = {
   name: string
@@ -11,11 +11,6 @@ export type AddressPayload = {
 }
 
 export type Address = AddressPayload & { id: number }
-
-const client = axios.create({
-  baseURL: 'http://localhost:8080/api',
-  withCredentials: true,
-})
 
 export const fetchAddresses = async () => {
   const res = await client.get<Address[]>('/addresses')

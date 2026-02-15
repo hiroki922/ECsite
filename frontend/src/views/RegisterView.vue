@@ -81,15 +81,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import BaseInput from '@/components/BaseInput.vue'
-import axios from 'axios'
+import client from '@/lib/apiClient'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-
-const client = axios.create({
-  baseURL: 'http://localhost:8080/api',
-  withCredentials: true,
-})
 
 const name = ref('')
 const email = ref('')
