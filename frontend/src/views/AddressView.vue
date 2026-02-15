@@ -12,7 +12,9 @@
       <p v-if="apiError" class="text-red-600 text-sm">{{ apiError }}</p>
 
       <section class="bg-white rounded-2xl shadow p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">新規追加</h2>
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">
+          {{ editingId ? '配送先を編集' : '新規追加' }}
+        </h2>
         <form class="grid grid-cols-1 md:grid-cols-2 gap-4" @submit.prevent="handleSubmit">
           <div>
             <label class="block text-sm text-gray-600 mb-1">氏名 *</label>
@@ -58,7 +60,15 @@
               type="submit"
               class="px-5 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition"
             >
-              追加する
+              {{ editingId ? '更新する' : '追加する' }}
+            </button>
+            <button
+              v-if="editingId"
+              type="button"
+              class="px-5 py-2 bg-gray-200 text-gray-700 font-semibold rounded hover:bg-gray-300 transition"
+              @click="cancelEdit"
+            >
+              キャンセル
             </button>
             <p v-if="errors.length" class="text-sm text-red-600">{{ errors.join(' / ') }}</p>
           </div>
@@ -96,6 +106,12 @@
             <div class="flex items-center gap-3">
               <button
                 class="text-blue-600 hover:underline text-sm"
+                @click="startEdit(address)"
+              >
+                編集
+              </button>
+              <button
+                class="text-blue-600 hover:underline text-sm"
                 :disabled="address.isDefault"
                 @click="setDefault(address.id)"
               >
@@ -119,9 +135,16 @@
 import { onMounted, reactive, ref } from 'vue'
 import BaseInput from '@/components/BaseInput.vue'
 import type { Address, AddressPayload } from '@/api/addresses'
-import { createAddress, deleteAddress, fetchAddresses, setDefaultAddress } from '@/api/addresses'
+import {
+  createAddress,
+  updateAddress,
+  deleteAddress,
+  fetchAddresses,
+  setDefaultAddress,
+} from '@/api/addresses'
 
 const addresses = ref<Address[]>([])
+const editingId = ref<number | null>(null)
 
 const form = reactive<AddressPayload>({
   name: '',
@@ -170,13 +193,33 @@ const handleSubmit = async () => {
   if (errors.value.length) return
 
   try {
-    await createAddress(form)
+    if (editingId.value) {
+      await updateAddress(editingId.value, form)
+    } else {
+      await createAddress(form)
+    }
     await load()
     resetForm()
   } catch (err) {
-    apiError.value = '配送先の登録に失敗しました'
+    apiError.value = editingId.value ? '配送先の更新に失敗しました' : '配送先の登録に失敗しました'
     console.error(err)
   }
+}
+
+const startEdit = (address: Address) => {
+  editingId.value = address.id
+  form.name = address.name
+  form.postalCode = address.postalCode
+  form.prefecture = address.prefecture
+  form.city = address.city
+  form.addressLine = address.addressLine
+  form.phone = address.phone
+  form.isDefault = address.isDefault
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+const cancelEdit = () => {
+  resetForm()
 }
 
 const setDefault = async (id: number) => {
@@ -202,6 +245,7 @@ const removeAddress = async (id: number) => {
 }
 
 const resetForm = () => {
+  editingId.value = null
   form.name = ''
   form.postalCode = ''
   form.prefecture = ''
