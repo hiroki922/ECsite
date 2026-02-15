@@ -1,9 +1,4 @@
-import axios from 'axios'
-
-const client = axios.create({
-  baseURL: 'http://localhost:8080/api',
-  withCredentials: true,
-})
+import client from '@/lib/apiClient'
 
 export type DashboardStats = {
   productCount: number

@@ -70,15 +70,10 @@
 import { useAuthStore } from '@/stores/auth'
 import { useCartStore } from '@/stores/cart'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import client from '@/lib/apiClient'
 import { computed, onMounted } from 'vue'
 
 const router = useRouter()
-
-const client = axios.create({
-  baseURL: 'http://localhost:8080/api',
-  withCredentials: true,
-})
 
 const auth = useAuthStore()
 const cartStore = useCartStore()

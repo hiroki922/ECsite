@@ -1,4 +1,4 @@
-import axios from 'axios'
+import client from '@/lib/apiClient'
 
 export type OrderItem = {
   id: number
@@ -26,11 +26,6 @@ export type Order = {
 export type OrderRequest = {
   addressId: number
 }
-
-const client = axios.create({
-  baseURL: 'http://localhost:8080/api',
-  withCredentials: true,
-})
 
 export const createOrder = async (payload: OrderRequest): Promise<Order> => {
   const res = await client.post<Order>('/orders', payload)

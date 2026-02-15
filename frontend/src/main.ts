@@ -20,9 +20,9 @@ const auth = useAuthStore()
 auth.restoreFromStorage()
 
 if (auth.isLoggedIn) {
-  import('axios').then(({ default: axios }) => {
-    axios
-      .get<{ loggedIn: boolean }>('http://localhost:8080/api/me', { withCredentials: true })
+  import('./lib/apiClient').then(({ default: apiClient }) => {
+    apiClient
+      .get<{ loggedIn: boolean }>('/me')
       .then((res) => {
         if (!res.data.loggedIn) {
           auth.clearUser()
