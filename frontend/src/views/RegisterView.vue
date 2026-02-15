@@ -97,6 +97,11 @@ const password = ref('')
 const confirmPassword = ref('')
 const errorMessage = ref('')
 const isSuccess = ref(false)
+interface RegisterResponse {
+  id: number
+  name: string
+}
+
 const handleRegister = async () => {
   if (!name.value || !email.value || !password.value || !confirmPassword.value) {
     errorMessage.value = '全ての項目を入力してください'
@@ -105,11 +110,6 @@ const handleRegister = async () => {
   if (password.value !== confirmPassword.value) {
     errorMessage.value = 'パスワードが一致しません'
     return
-  }
-  // サーバーから返ってくるデータの型
-  interface RegisterResponse {
-    id: number
-    name: string
   }
   try {
     await client.post<RegisterResponse>('/register', {
@@ -121,7 +121,7 @@ const handleRegister = async () => {
     isSuccess.value = true
   } catch (err) {
     const axiosError = err as { response?: { data?: { error?: string } }; message: string }
-    errorMessage.value = "❌ 登録失敗: " + (axiosError.response?.data?.error || axiosError.message)
+    errorMessage.value = '登録に失敗しました: ' + (axiosError.response?.data?.error || axiosError.message)
   }
 }
 
