@@ -30,7 +30,7 @@ public class SecurityConfig {
                         // 管理者専用API
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // 全てのユーザがOK
-                        .requestMatchers("/api/register", "/api/login", "/api/logout").permitAll()
+                        .requestMatchers("/api/register", "/api/login", "/api/logout", "/api/me").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                         // 住所系API → 認証必須
                         .requestMatchers("/api/addresses/**").authenticated()

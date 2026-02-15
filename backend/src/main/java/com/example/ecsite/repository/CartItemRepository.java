@@ -2,6 +2,7 @@ package com.example.ecsite.repository;
 
 import com.example.ecsite.model.CartItem;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,5 +13,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     List<CartItem> findByUserId(Long userId);
     Optional<CartItem> findByIdAndUserId(Long id, Long userId);
     Optional<CartItem> findByUserIdAndProductId(Long userId, Long productId);
+
+    @Modifying
     void deleteByUserId(Long userId);
 }

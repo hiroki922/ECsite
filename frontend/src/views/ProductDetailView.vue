@@ -53,15 +53,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { fetchProduct, type Product } from '@/api/products'
 import { useAuthStore } from '@/stores/auth'
-import { addToCart as apiAddToCart } from '@/api/cart'
+import { useCartStore } from '@/stores/cart'
 
 const route = useRoute()
 const auth = useAuthStore()
-const isLoggedIn = auth.isLoggedIn
+const cartStore = useCartStore()
+const isLoggedIn = computed(() => auth.isLoggedIn)
 
 const product = ref<Product | null>(null)
 const quantity = ref(1)
@@ -86,7 +87,7 @@ const handleAddToCart = async () => {
   addMessage.value = ''
   addError.value = ''
   try {
-    await apiAddToCart({ productId: product.value.id, quantity: quantity.value })
+    await cartStore.add(product.value.id, quantity.value)
     addMessage.value = 'カートに追加しました'
   } catch {
     addError.value = 'カートへの追加に失敗しました'

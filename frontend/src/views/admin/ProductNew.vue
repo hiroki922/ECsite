@@ -53,10 +53,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import axios from 'axios'
+import { useRouter } from 'vue-router'
+import { createProduct, type Product } from '@/api/products'
 import BaseInput from '@/components/BaseInput.vue'
 
-const product = ref({
+const router = useRouter()
+
+const product = ref<Product>({
   name: '',
   description: '',
   price: 0,
@@ -72,14 +75,10 @@ const submitProduct = async () => {
   error.value = ''
 
   try {
-    const res = await axios.post('http://localhost:8080/api/admin/products', product.value, {
-      withCredentials: true,
-    })
-
+    await createProduct(product.value)
     message.value = '商品が登録されました！'
-    console.log(res.data)
+    setTimeout(() => router.push('/admin/products'), 1000)
   } catch (err: any) {
-    console.error(err)
     error.value = err.response?.data?.error || '登録に失敗しました'
   }
 }

@@ -8,6 +8,7 @@
         </div>
         <span class="text-sm text-gray-500">登録件数: {{ addresses.length }} 件</span>
       </div>
+
       <p v-if="apiError" class="text-red-600 text-sm">{{ apiError }}</p>
 
       <section class="bg-white rounded-2xl shadow p-6">
@@ -15,50 +16,43 @@
         <form class="grid grid-cols-1 md:grid-cols-2 gap-4" @submit.prevent="handleSubmit">
           <div>
             <label class="block text-sm text-gray-600 mb-1">氏名 *</label>
-            <input v-model="form.name" type="text" :class="inputClass" placeholder="山田 太郎" required />
+            <BaseInput v-model="form.name" placeholder="山田 太郎" required />
           </div>
+
           <div>
             <label class="block text-sm text-gray-600 mb-1">電話番号 *</label>
-            <input
-              v-model="form.phone"
-              type="tel"
-              :class="inputClass"
-              placeholder="09012345678"
-              required
-            />
+            <BaseInput v-model="form.phone" type="tel" placeholder="09012345678" required />
           </div>
+
           <div>
             <label class="block text-sm text-gray-600 mb-1">郵便番号 *</label>
-            <input
-              v-model="form.postalCode"
-              type="text"
-              :class="inputClass"
-              placeholder="123-4567"
-              required
-            />
+            <BaseInput v-model="form.postalCode" placeholder="123-4567" required />
           </div>
+
           <div>
             <label class="block text-sm text-gray-600 mb-1">都道府県 *</label>
-            <input v-model="form.prefecture" type="text" :class="inputClass" placeholder="東京都" required />
+            <BaseInput v-model="form.prefecture" placeholder="東京都" required />
           </div>
+
           <div>
             <label class="block text-sm text-gray-600 mb-1">市区町村 *</label>
-            <input v-model="form.city" type="text" :class="inputClass" placeholder="渋谷区" required />
+            <BaseInput v-model="form.city" placeholder="渋谷区" required />
           </div>
+
           <div>
             <label class="block text-sm text-gray-600 mb-1">番地・建物名 *</label>
-            <input
+            <BaseInput
               v-model="form.addressLine"
-              type="text"
-              :class="inputClass"
               placeholder="1-2-3 サンプルマンション101"
               required
             />
           </div>
+
           <div class="md:col-span-2 flex items-center gap-3">
             <input id="isDefault" v-model="form.isDefault" type="checkbox" class="h-4 w-4" />
             <label for="isDefault" class="text-sm text-gray-700">デフォルト配送先に設定する</label>
           </div>
+
           <div class="md:col-span-2 flex flex-wrap items-center gap-3">
             <button
               type="submit"
@@ -66,9 +60,7 @@
             >
               追加する
             </button>
-            <p v-if="errors.length" class="text-sm text-red-600">
-              {{ errors.join(' / ') }}
-            </p>
+            <p v-if="errors.length" class="text-sm text-red-600">{{ errors.join(' / ') }}</p>
           </div>
         </form>
       </section>
@@ -109,7 +101,10 @@
               >
                 デフォルトにする
               </button>
-              <button class="text-red-500 hover:underline text-sm" @click="removeAddress(address.id)">
+              <button
+                class="text-red-500 hover:underline text-sm"
+                @click="removeAddress(address.id)"
+              >
                 削除
               </button>
             </div>
@@ -122,23 +117,13 @@
 
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
-import type { Address } from '@/api/addresses'
+import BaseInput from '@/components/BaseInput.vue'
+import type { Address, AddressPayload } from '@/api/addresses'
 import { createAddress, deleteAddress, fetchAddresses, setDefaultAddress } from '@/api/addresses'
-
-type Address = {
-  id: number
-  name: string
-  postalCode: string
-  prefecture: string
-  city: string
-  addressLine: string
-  phone: string
-  isDefault: boolean
-}
 
 const addresses = ref<Address[]>([])
 
-const form = reactive<Omit<Address, 'id'>>({
+const form = reactive<AddressPayload>({
   name: '',
   postalCode: '',
   prefecture: '',
@@ -150,8 +135,6 @@ const form = reactive<Omit<Address, 'id'>>({
 
 const errors = ref<string[]>([])
 const apiError = ref('')
-const inputClass =
-  'w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200'
 
 const load = async () => {
   apiError.value = ''
@@ -168,7 +151,14 @@ onMounted(load)
 const handleSubmit = async () => {
   errors.value = []
   apiError.value = ''
-  if (!form.name || !form.postalCode || !form.prefecture || !form.city || !form.addressLine || !form.phone) {
+  if (
+    !form.name ||
+    !form.postalCode ||
+    !form.prefecture ||
+    !form.city ||
+    !form.addressLine ||
+    !form.phone
+  ) {
     errors.value.push('必須項目を入力してください')
   }
   if (form.postalCode && !/^[0-9]{3}-?[0-9]{4}$/.test(form.postalCode)) {

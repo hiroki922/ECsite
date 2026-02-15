@@ -5,7 +5,6 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
-import './app.css'
 import { useAuthStore } from './stores/auth'
 
 // アプリインスタンスを作成
@@ -16,9 +15,24 @@ const pinia = createPinia()
 app.use(pinia) // Pinia
 app.use(router) // Vue Router
 
-// ストアからログイン状態を復元
+// ストアからログイン状態を復元し、バックエンドセッションを検証
 const auth = useAuthStore()
 auth.restoreFromStorage()
+
+if (auth.isLoggedIn) {
+  import('axios').then(({ default: axios }) => {
+    axios
+      .get<{ success: boolean }>('http://localhost:8080/api/me', { withCredentials: true })
+      .then((res) => {
+        if (!res.data.success) {
+          auth.clearUser()
+        }
+      })
+      .catch(() => {
+        auth.clearUser()
+      })
+  })
+}
 
 // アプリをマウント
 app.mount('#app')
