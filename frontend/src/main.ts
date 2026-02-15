@@ -22,9 +22,9 @@ auth.restoreFromStorage()
 if (auth.isLoggedIn) {
   import('axios').then(({ default: axios }) => {
     axios
-      .get<{ success: boolean }>('http://localhost:8080/api/me', { withCredentials: true })
+      .get<{ loggedIn: boolean }>('http://localhost:8080/api/me', { withCredentials: true })
       .then((res) => {
-        if (!res.data.success) {
+        if (!res.data.loggedIn) {
           auth.clearUser()
         }
       })

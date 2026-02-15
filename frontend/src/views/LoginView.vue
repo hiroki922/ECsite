@@ -28,7 +28,7 @@
         <div class="text-sm text-center text-gray-600 mt-4">
           <p>アカウントをお持ちでないですか？</p>
           <p>
-            <a href="/register" class="text-blue-500 hover:underline">登録はこちら</a>
+            <router-link to="/register" class="text-blue-500 hover:underline">登録はこちら</router-link>
           </p>
         </div>
         <!-- エラーメッセージ -->
@@ -45,59 +45,46 @@ import { ref } from 'vue'
 import axios from 'axios'
 import BaseInput from '@/components/BaseInput.vue'
 import { useAuthStore } from '@/stores/auth'
-import router from '@/router'
+import { useRouter } from 'vue-router'
 
-// フォーム入力
+const router = useRouter()
+
+const client = axios.create({
+  baseURL: 'http://localhost:8080/api',
+  withCredentials: true,
+})
+
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
 const auth = useAuthStore()
 
-// バックエンドレスポンス型
-interface User {
-  name: string
-  email: string
-  role?: string
-}
-
-// サーバーから返ってくるデータの型
 interface LoginResponse {
   loggedIn: boolean
-  user?: User
+  user?: { name: string }
   role?: string
   message?: string
 }
 
 const handleLogin = async () => {
-  errorMessage.value = '' // エラーメッセージをリセット
+  errorMessage.value = ''
 
   try {
-    // Sping Bootのバックエンドにログインリクエストを送信
-    // axiosを使ってPOSTリクエストを送信します
-    const res = await axios.post<LoginResponse>(
-      'http://localhost:8080/api/login',
-      {
-        email: email.value,
-        password: password.value,
-      },
-      { withCredentials: true }
-    ) // withCredentialsをtrueに設定してクッキーを送信
+    const res = await client.post<LoginResponse>('/login', {
+      email: email.value,
+      password: password.value,
+    })
 
     const loginData = res.data
 
-    // ログイン成功時の処理
     if (loginData.loggedIn && loginData.user) {
-      // ユーザー情報をPiniaストアに保存
-      console.log('ログイン成功:', loginData.user)
-      const roleRaw = (loginData.user.role ?? loginData.role)?.toUpperCase()
-      const role = roleRaw === 'ADMIN' ? 'ADMIN' : 'USER'
+      const role = loginData.role?.toUpperCase() === 'ADMIN' ? 'ADMIN' : 'USER'
       auth.setUser({ name: loginData.user.name, role })
       router.push('/')
     } else {
       errorMessage.value = loginData.message || 'メールアドレスまたはパスワードが間違っています'
     }
   } catch (err) {
-    // エラーハンドリング
     const axiosError = err as { response?: { data?: { error?: string } } }
     errorMessage.value =
       axiosError.response?.data?.error || 'メールアドレスまたはパスワードが間違っています'
