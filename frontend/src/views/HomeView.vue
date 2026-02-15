@@ -13,7 +13,9 @@
 
     <section class="max-w-6xl mx-auto px-6 py-12">
       <h2 class="text-2xl font-bold text-gray-800 mb-6">おすすめ商品</h2>
-      <div v-if="products.length === 0" class="text-gray-500">読み込み中...</div>
+      <div v-if="loading" class="text-gray-500">読み込み中...</div>
+      <div v-else-if="error" class="text-red-500">{{ error }}</div>
+      <div v-else-if="products.length === 0" class="text-gray-500">商品がありません</div>
       <div v-else class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <router-link
           v-for="p in products.slice(0, 8)"
@@ -37,12 +39,16 @@ import { ref, onMounted } from 'vue'
 import { fetchProducts, type Product } from '@/api/products'
 
 const products = ref<Product[]>([])
+const loading = ref(true)
+const error = ref('')
 
 onMounted(async () => {
   try {
     products.value = await fetchProducts()
   } catch {
-    // トップページなのでエラーは静かに処理
+    error.value = '商品の取得に失敗しました'
+  } finally {
+    loading.value = false
   }
 })
 </script>
