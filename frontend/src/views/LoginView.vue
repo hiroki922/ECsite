@@ -45,7 +45,14 @@ import { ref } from 'vue'
 import axios from 'axios'
 import BaseInput from '@/components/BaseInput.vue'
 import { useAuthStore } from '@/stores/auth'
-import router from '@/router'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const client = axios.create({
+  baseURL: 'http://localhost:8080/api',
+  withCredentials: true,
+})
 
 // フォーム入力
 const email = ref('')
@@ -74,14 +81,10 @@ const handleLogin = async () => {
   try {
     // Sping Bootのバックエンドにログインリクエストを送信
     // axiosを使ってPOSTリクエストを送信します
-    const res = await axios.post<LoginResponse>(
-      'http://localhost:8080/api/login',
-      {
-        email: email.value,
-        password: password.value,
-      },
-      { withCredentials: true }
-    ) // withCredentialsをtrueに設定してクッキーを送信
+    const res = await client.post<LoginResponse>('/login', {
+      email: email.value,
+      password: password.value,
+    })
 
     const loginData = res.data
 

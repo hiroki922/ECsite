@@ -2,6 +2,7 @@ package com.example.ecsite.controller;
 
 import com.example.ecsite.dto.LoginRequest;
 import com.example.ecsite.dto.LoginResponse;
+import com.example.ecsite.dto.RegisterRequest;
 import com.example.ecsite.dto.UserDto;
 import com.example.ecsite.model.User;
 import com.example.ecsite.service.AuthService;
@@ -48,8 +49,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return authService.register(user.getName(), user.getEmail(), user.getPassword());
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        User user = authService.register(request.getName(), request.getEmail(), request.getPassword());
+        return ResponseEntity.ok(Map.of("id", user.getId(), "name", user.getName()));
     }
 
     @PostMapping("/login")

@@ -81,8 +81,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import BaseInput from '@/components/BaseInput.vue'
-import api from '@/plugins/axios'
-import router from '@/router'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const client = axios.create({
+  baseURL: 'http://localhost:8080/api',
+  withCredentials: true,
+})
 
 const name = ref('')
 const email = ref('')
@@ -105,11 +112,10 @@ const handleRegister = async () => {
     name: string
   }
   try {
-    const res = await api.post<RegisterResponse>('http://localhost:8080/api/register', {
+    await client.post<RegisterResponse>('/register', {
       name: name.value,
       email: email.value,
       password: password.value,
-      confirmPassword: confirmPassword.value
     })
     errorMessage.value = ''
     isSuccess.value = true
