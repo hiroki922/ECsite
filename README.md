@@ -1,163 +1,192 @@
-Spring Boot + Vue.js(TypeScript) で ECサイト（ログイン・商品一覧・カート機能）
+# ECサイト
 
+Spring Boot + Vue 3 (TypeScript) で構築したフルスタック EC サイトです。
 
-全体構成
-* バックエンド: Spring Boot (Java)
-    * REST API を作成
-    * ユーザー認証（JWT）
-    * 商品一覧API
-    * カートAPI
-* フロントエンド: Vue 3 + TypeScript
-    * Vue Router で画面遷移
-    * Pinia(Vuexでも可) で状態管理
-    * Axios で Spring Boot API と通信
-* DB: MySQL / PostgreSQL（開発なら H2 でも可）
+## 技術スタック
 
-機能ごとの概要
-1. 認証（ログイン）
-* ユーザーは users テーブルに保存（id, email, passwordハッシュ）
-* Spring Security + JWT でログイン認証
-    * /auth/login に email, password をPOST
-    * 正常なら JWT を返す
-* フロント側は JWT を localStorage/sessionStorage に保存
-* Axios の interceptor で毎回 Authorization ヘッダーに Bearer token を付与
+| レイヤー | 技術 |
+|---------|------|
+| バックエンド | Java 17 / Spring Boot 3.5.5 / Spring Security 6 |
+| フロントエンド | Vue 3.5 / TypeScript / Vite 7 / Tailwind CSS 4 |
+| 状態管理 | Pinia 3 |
+| HTTP通信 | Axios（Cookie ベースセッション認証） |
+| データベース | MySQL 8.0 |
+| ORM | Spring Data JPA / Hibernate |
 
-2. 商品一覧
-* products テーブル (id, name, description, price, imageUrl)
-* Spring Boot 側で /products GET API を作成
-* フロントで API から取得して一覧表示
+## 主な機能
 
-3. カート機能
-* 認証ユーザーごとにカートを保持
-* DB設計例：
-    * cart_items (id, user_id, product_id, quantity)
-* API:
-    * GET /cart → カート一覧
-    * POST /cart → 商品を追加
-    * PUT /cart/{itemId} → 数量変更
-    * DELETE /cart/{itemId} → 削除
-* フロントは Pinia でカートの状態を保持しつつ、更新時に API と同期
+### ユーザー向け
+- ユーザー登録・ログイン（セッション認証）
+- 商品一覧・商品詳細
+- カート（追加・数量変更・削除）
+- 配送先管理（追加・編集・削除・デフォルト設定）
+- チェックアウト（配送先選択 → 注文確定 → 在庫減算）
+- 注文履歴・注文詳細
 
-開発手順（ステップごと）
-バックエンド（Spring Boot）
-1. プロジェクト作成Spring Initializr選択:
-    * Spring Boot 3.x
-    * Dependencies: Spring Web, Spring Security, JPA, MySQL (or H2), Lombok
-2. DB設定 (application.yml)spring:
-3.   datasource:
-4.     url: jdbc:mysql://localhost:3306/ecdb
-5.     username: root
-6.     password: password
-7.   jpa:
-8.     hibernate:
-9.       ddl-auto: update
-10.     show-sql: true
-11. 
-12. Entity作成
-    * User, Product, CartItem を作成
-13. 認証 (JWT) 実装
-    * Spring Security 設定クラス
-    * JWT Utils, Filter 実装
-    * /auth/login API 実装
-14. 商品API /products
-    * GET で一覧を返す
-15. カートAPI /cart
-    * CRUD 実装
+### 管理者向け
+- ダッシュボード（売上・注文数・ユーザー数の統計）
+- 商品管理（CRUD）
+- 注文管理（ステータス変更）
+- ユーザー管理（ロール変更）
 
-フロントエンド（Vue + TS）
-1. プロジェクト作成npm init vue@latest ec-frontend
-2. cd ec-frontend
-3. npm install
-4. npm install axios pinia vue-router
-5. 
-6. ディレクトリ構成src/
-7.   api/        ← axios 設定
-8.   store/      ← pinia
-9.   views/      ← 各ページ
-10.   components/ ← UIコンポーネント
-11. 
-12. ルーティング
-    * /login ログインページ
-    * /products 商品一覧
-    * /cart カート
-13. API通信 (axios)
-    * interceptor で JWT を付与
-    * api/auth.ts, api/products.ts, api/cart.ts
-14. 状態管理 (Pinia)
-    * useAuthStore (JWT, user)
-    * useCartStore (カート内容)
-15. UI
-    * Vuetify / Element Plus などの UI ライブラリを使うと楽
+## ディレクトリ構成
 
-ディレクトリ構造
-
+```
 ECsite/
-├─ backend/                ← Spring Boot プロジェクト
-│   ├─ src/
-│   │   ├─ main/
-│   │   │   ├─ java/com/example/ecsite/...
-│   │   │   └─ resources/
-│   │   │       ├─ application.yml
-│   │   │       ├─ static/      ← 画像や静的ファイル
-│   │   │       └─ templates/   ← Thymeleafを使う場合のみ
-│   │   └─ test/java/...
-│   ├─ pom.xml
-│   └─ mvnw, mvnw.cmd
+├─ backend/                             # Spring Boot
+│  ├─ src/main/java/com/example/ecsite/
+│  │  ├─ config/                        # SecurityConfig 等
+│  │  ├─ controller/                    # REST API エンドポイント
+│  │  ├─ service/                       # ビジネスロジック
+│  │  ├─ repository/                    # データアクセス (JPA)
+│  │  ├─ model/                         # エンティティ
+│  │  ├─ dto/                           # リクエスト/レスポンス DTO
+│  │  └─ exception/                     # カスタム例外
+│  ├─ src/main/resources/
+│  │  ├─ application.properties         # DB接続・JPA設定
+│  │  └─ data.sql                       # 初期データ投入用
+│  └─ pom.xml
 │
-├─ frontend/               ← Vue 3 + TypeScript プロジェクト
-│   ├─ src/
-│   │   ├─ assets/
-│   │   ├─ components/
-│   │   ├─ views/
-│   │   ├─ store/          ← Pinia
-│   │   ├─ router/         ← Vue Router
-│   │   └─ api/            ← axios 設定やAPI呼び出し
-│   ├─ public/
-│   ├─ package.json
-│   └─ tsconfig.json
+├─ frontend/                            # Vue 3 + TypeScript
+│  ├─ src/
+│  │  ├─ api/                           # API クライアント (Axios)
+│  │  ├─ components/                    # 共通コンポーネント
+│  │  ├─ views/                         # ページコンポーネント
+│  │  │  └─ admin/                      # 管理画面
+│  │  ├─ stores/                        # Pinia ストア (auth, cart)
+│  │  ├─ router/                        # Vue Router
+│  │  ├─ lib/                           # ユーティリティ
+│  │  └─ assets/                        # CSS
+│  ├─ package.json
+│  └─ vite.config.ts
 │
-├─ .gitignore
-├─ .gitattributes
 └─ README.md
+```
 
-✅ 1. ユーザー登録・ログイン後のセッション管理確認
+## 環境構築
 
-ログイン状態を保持できているか（トークン or セッション）
+### 前提条件
 
-未ログイン時に特定のページ（例：購入ページ）へアクセスしたらリダイレクトされるか
+- **Java** 17 以上
+- **Maven** 3.8 以上（または同梱の `mvnw` を使用）
+- **Node.js** 20.19 以上 または 22.12 以上
+- **npm** 10 以上
+- **MySQL** 8.0 以上
 
-🛒 2. 商品一覧ページ（フロント側）
+### 1. MySQL のセットアップ
 
-バックエンドAPI： /api/products のようなエンドポイントを作る
+MySQL をインストールし、データベースを作成します。
 
-フロント(Vueなど)で商品一覧を表示
+```bash
+mysql -u root -p
+```
 
-📦 3. 商品詳細ページ
+```sql
+CREATE DATABASE ecsite DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
 
-/api/products/{id} を作る
+> デフォルトの接続情報は `root` / `password` です。
+> 変更する場合は `backend/src/main/resources/application.properties` を編集してください。
 
-商品をクリックすると詳細ページに遷移するようにする
+### 2. バックエンドの起動
 
-🛍 4. カート機能
+```bash
+cd backend
 
-ログインユーザーごとにカートを管理（DBに保存 or セッションに保持）
+# 依存関係のダウンロード & ビルド
+./mvnw clean install -DskipTests
 
-「カートに追加」「削除」などのAPIを作成
+# 起動（デフォルト: http://localhost:8080）
+./mvnw spring-boot:run
+```
 
-💳 5. 注文機能（購入処理）
+初回起動時に Hibernate がテーブルを自動作成します（`ddl-auto=update`）。
 
-カート内容をもとに注文テーブルへ保存
+#### 初期データの投入（任意）
 
-在庫数の減算などもこの段階で
+初期データを投入したい場合は `application.properties` を編集します。
 
-📜 6. 注文履歴・マイページ
+```properties
+spring.sql.init.mode=always
+```
 
-自分の注文履歴を表示するページ
+起動後にデータが投入されたら、`never` に戻してください。
 
-登録情報の編集
+### 3. フロントエンドの起動
 
-🧪 7. テスト・エラーハンドリング
+```bash
+cd frontend
 
-Spring側でユニットテスト・統合テストを書く
+# 依存関係のインストール
+npm install
 
-Vue側でもエラー処理（例：ログイン失敗、APIエラー）
+# 開発サーバー起動（デフォルト: http://localhost:5173）
+npm run dev
+```
+
+### 4. 動作確認
+
+1. http://localhost:5173 にアクセス
+2. 「新規登録」からユーザーを作成
+3. ログインして商品一覧・カート・注文を確認
+
+### 管理者アカウント
+
+管理画面（`/admin`）にアクセスするには `ADMIN` ロールが必要です。
+初期データまたは DB を直接編集してユーザーの `role` カラムを `ADMIN` に設定してください。
+
+```sql
+UPDATE users SET role = 'ADMIN' WHERE email = 'your-email@example.com';
+```
+
+## API エンドポイント一覧
+
+### 認証
+| メソッド | パス | 説明 |
+|---------|------|------|
+| POST | `/api/auth/register` | ユーザー登録 |
+| POST | `/api/auth/login` | ログイン |
+| POST | `/api/auth/logout` | ログアウト |
+| GET | `/api/auth/me` | ログインユーザー情報取得 |
+
+### 商品
+| メソッド | パス | 説明 |
+|---------|------|------|
+| GET | `/api/products` | 商品一覧 |
+| GET | `/api/products/{id}` | 商品詳細 |
+
+### カート
+| メソッド | パス | 説明 |
+|---------|------|------|
+| GET | `/api/cart` | カート取得 |
+| POST | `/api/cart` | 商品追加 |
+| PUT | `/api/cart/{id}` | 数量変更 |
+| DELETE | `/api/cart/{id}` | 商品削除 |
+
+### 配送先
+| メソッド | パス | 説明 |
+|---------|------|------|
+| GET | `/api/addresses` | 一覧取得 |
+| POST | `/api/addresses` | 新規追加 |
+| PUT | `/api/addresses/{id}` | 編集 |
+| DELETE | `/api/addresses/{id}` | 削除 |
+| POST | `/api/addresses/{id}/default` | デフォルト設定 |
+
+### 注文
+| メソッド | パス | 説明 |
+|---------|------|------|
+| POST | `/api/orders` | 注文作成 |
+| GET | `/api/orders` | 注文履歴 |
+| GET | `/api/orders/{id}` | 注文詳細 |
+
+### 管理者
+| メソッド | パス | 説明 |
+|---------|------|------|
+| POST | `/api/admin/products` | 商品登録 |
+| PUT | `/api/admin/products/{id}` | 商品更新 |
+| DELETE | `/api/admin/products/{id}` | 商品削除 |
+| GET | `/api/admin/users` | ユーザー一覧 |
+| PUT | `/api/admin/users/{id}/role` | ロール変更 |
+| GET | `/api/admin/orders` | 全注文一覧 |
+| PUT | `/api/admin/orders/{id}/status` | 注文ステータス変更 |
+| GET | `/api/admin/stats` | ダッシュボード統計 |
